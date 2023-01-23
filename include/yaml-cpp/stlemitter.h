@@ -11,6 +11,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 namespace YAML {
 template <typename Seq>
@@ -44,6 +45,15 @@ inline Emitter& operator<<(Emitter& emitter, const std::map<K, V>& m) {
     emitter << Key << v.first << Value << v.second;
   emitter << EndMap;
   return emitter;
+}
+
+template <typename K, typename V>
+inline Emitter& operator<<(Emitter& emitter, const std::unordered_multimap<K, V>& m) {
+    emitter << BeginMap;
+    for (const auto& v : m)
+        emitter << Key << v.first << Value << v.second;
+    emitter << EndMap;
+    return emitter;
 }
 }
 

@@ -12,6 +12,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <sstream>
 #include <type_traits>
 #include <vector>
@@ -249,6 +250,35 @@ struct convert<std::map<K, V, C, A>> {
 #endif
     return true;
   }
+};
+
+// std::unordered_multimap
+template <typename K, typename V, typename C, typename A>
+struct convert<std::unordered_multimap<K, V, C, A>> {
+    static Node encode(const std::unordered_multimap<K, V, C, A>& rhs) {
+        Node node(NodeType::Map);
+        for (const auto& element : rhs)
+            node.force_insert(element.first, element.second);
+        return node;
+    }
+
+    static bool decode(const Node& node, std::unordered_multimap<K, V, C, A>& rhs) {
+        if (!node.IsMap())
+            return false;
+
+        rhs.clear();
+
+        K key;
+        V val;
+        for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
+            key = it->first.as<std::string>();
+            val = it->second.as<int>();
+            rhs.insert({ key, val });
+        }
+
+
+        return true;
+    }
 };
 
 // std::vector
